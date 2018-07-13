@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/redir', (req, res) => {
-    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=http://localhost:8000/callback`)
+    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=https://safedeliver.herokuapp.com/callback`)
 })
 app.get('/callback', (req,res) => {
     console.log(req.headers)
