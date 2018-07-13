@@ -8,6 +8,7 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const app = express();
+var cors = require('cors');
 const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET } = require('./config.js');
 mongoose.Promise = global.Promise;
 
@@ -16,6 +17,18 @@ app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+  if (req.method === 'OPTIONS') {
+    return res.send(204);
+  }
+  next();
+});
+
 
 app.use(session({
   secret: 'keyboard cat',
