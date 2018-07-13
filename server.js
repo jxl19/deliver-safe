@@ -46,6 +46,10 @@ function ensureAuthenticated(req, res, next) {
   }
 }
 
+app.get('/', (req, res) => {
+    res.send("hi");
+})
+
 app.get('/redir', (req, res) => {
     res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=http://localhost:8000/callback`)
 })
