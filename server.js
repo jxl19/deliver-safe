@@ -9,6 +9,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const app = express();
 var cors = require('cors');
+var rp = require('request-promise');
+var querystring = require('querystring');
 const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET } = require('./config.js');
 mongoose.Promise = global.Promise;
 
@@ -64,11 +66,37 @@ app.get('/', (req, res) => {
 })
 
 app.get('/redir', (req, res) => {
-    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=https://safedeliver.herokuapp.com/callback`)
+    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=http://localhost:8000/callback`)
 })
 app.get('/callback', (req,res) => {
-    console.log(req.headers)
-    res.send(req.query.code);
+    // console.log(req.headers);
+    // console.log(req.query.code);
+    // res.send(req.query.code); 
+    var requestOpts = {
+        uri: 'https://login-sandbox.safetrek.io/oauth/token',
+        method: 'POST',
+        body: querystring.stringify({
+              "grant_type": "authorization_code",
+              "code": req.query.code,
+              "client_id": CLIENT_ID,
+              "client_secret": CLIENT_SECRET,
+              "redirect_uri": "http://localhost:8000/callbackredir"
+        })
+    };
+    //we then post the code and the headers to the noonlight servers at which point noonlight servers will return us accesstoken
+    return rp(requestOpts)
+        .then(function(req, res){
+            res.send("test");
+            console.log("req");
+        })
+        .catch(function(reason) {
+            res.send("failed");
+            console.dir("reason");
+        })
+})
+
+app.get('/callbackredir', (req, res) => {
+    res.send(req.body);
 })
 
 app.use('*', (req, res) => {
