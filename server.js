@@ -10,7 +10,6 @@ const MongoStore = require('connect-mongo')(session);
 const app = express();
 var cors = require('cors');
 var rp = require('request-promise');
-var querystring = require('querystring');
 const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET } = require('./config.js');
 mongoose.Promise = global.Promise;
 
@@ -75,23 +74,27 @@ app.get('/callback', (req,res) => {
     var requestOpts = {
         uri: 'https://login-sandbox.safetrek.io/oauth/token',
         method: 'POST',
-        body: querystring.stringify({
+        headers: {
+            'content-type':"application/json"
+        },
+        body: {
               "grant_type": "authorization_code",
               "code": req.query.code,
               "client_id": CLIENT_ID,
               "client_secret": CLIENT_SECRET,
               "redirect_uri": "http://localhost:8000/callbackredir"
-        })
+        },
+        json:true
     };
     //we then post the code and the headers to the noonlight servers at which point noonlight servers will return us accesstoken
     return rp(requestOpts)
-        .then(function(req, res){
+        .then(function(body){
             res.send("test");
-            console.log("req");
+            console.log(body);
         })
         .catch(function(reason) {
             res.send("failed");
-            console.dir("reason");
+            console.log(reason);
         })
 })
 
