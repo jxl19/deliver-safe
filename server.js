@@ -10,7 +10,7 @@ const MongoStore = require('connect-mongo')(session);
 const app = express();
 const cors = require('cors');
 const rp = require('request-promise');
-const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET } = require('./config.js');
+const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } = require('./config.js');
 mongoose.Promise = global.Promise;
 
 app.use(morgan('common'));
@@ -22,8 +22,9 @@ app.use(cors());
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+    res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     next();
 });
 
@@ -40,11 +41,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function (req, res, next) {
-    res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    next();
-});
-
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -56,14 +52,15 @@ function ensureAuthenticated(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-    res.send("hi");
+    res.send("bye");
 })
 
 app.get('/redir', (req, res) => {
-    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=https://safedeliver.herokuapp.com/callback`)
+    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=${REDIRECT_URL}`)
 })
 
 app.get('/callback', (req, res) => {
+    //TODO: store tokens after
     var requestOpts = {
         uri: 'https://login-sandbox.safetrek.io/oauth/token',
         method: 'POST',
@@ -71,18 +68,18 @@ app.get('/callback', (req, res) => {
             'content-type': "application/json"
         },
         body: {
-            "grant_type": "authorization_code",
-            "code": req.query.code,
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "redirect_uri": "https://safedeliver.herokuapp.com/callbackredir"
+            'grant_type': 'authorization_code',
+            'code': req.query.code,
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+            'redirect_uri': REDIRECT_URL
         },
         json: true
     };
-    //we then post the code and the headers to the noonlight servers at which point noonlight servers will return us accesstoken
+    //we then post the code to the noonlight servers at which point noonlight servers will return us accesstoken
     return rp(requestOpts)
         .then(function (body) {
-            res.send("test");
+            res.send("success");
             console.log(body);
         })
         .catch(function (reason) {
@@ -91,9 +88,7 @@ app.get('/callback', (req, res) => {
         })
 })
 
-app.get('/callbackredir', (req, res) => {
-    res.send(req.body);
-})
+
 
 app.use('*', (req, res) => {
     res.status(404).json({ message: 'Request not found' });
