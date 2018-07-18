@@ -8,8 +8,8 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const app = express();
-var cors = require('cors');
-var rp = require('request-promise');
+const cors = require('cors');
+const rp = require('request-promise');
 const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET } = require('./config.js');
 mongoose.Promise = global.Promise;
 
@@ -30,7 +30,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-
 app.use(session({
   secret: 'keyboard cat',
   saveUninitialized: true,
@@ -49,7 +48,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -65,12 +63,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/redir', (req, res) => {
-    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=http://localhost:8000/callback`)
+    res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=https://safedeliver.herokuapp.com/callback`)
 })
+
 app.get('/callback', (req,res) => {
-    // console.log(req.headers);
-    // console.log(req.query.code);
-    // res.send(req.query.code); 
     var requestOpts = {
         uri: 'https://login-sandbox.safetrek.io/oauth/token',
         method: 'POST',
@@ -82,7 +78,7 @@ app.get('/callback', (req,res) => {
               "code": req.query.code,
               "client_id": CLIENT_ID,
               "client_secret": CLIENT_SECRET,
-              "redirect_uri": "http://localhost:8000/callbackredir"
+              "redirect_uri": "https://safedeliver.herokuapp.com/callbackredir"
         },
         json:true
     };
