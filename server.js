@@ -10,7 +10,9 @@ const MongoStore = require('connect-mongo')(session);
 const app = express();
 const cors = require('cors');
 const rp = require('request-promise');
-const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } = require('./config.js');
+const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, BASE_URL } = require('./config.js');
+const {User} = require('./models');
+const userRouter = require('./routers/userRouter');
 mongoose.Promise = global.Promise;
 
 app.use(morgan('common'));
@@ -51,9 +53,21 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
+app.use('/api/users', userRouter);
 app.get('/', (req, res) => {
-    res.send("bye");
+    var testVar;
+    //redir somewhere
+    // console.log(req.user);
+    User.find(({_id: req.user._id}))
+    .exec()
+    .then(user => {
+        testVar = user[0].accessToken;
+        res.send(user[0].accessToken);
+    });
+    console.log("testVar: " + testVar);
+    // res.send("bye");
 })
+
 
 app.get('/redir', (req, res) => {
     res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=${REDIRECT_URL}`)
@@ -77,17 +91,19 @@ app.get('/callback', (req, res) => {
         json: true
     };
     //we then post the code to the noonlight servers at which point noonlight servers will return us accesstoken
-    return rp(requestOpts)
+    rp(requestOpts)
         .then(function (body) {
-            res.send("success");
+            //send the tokens to server and store
             console.log(body);
+            res.send(body);
+            //change later.. id is hardcoded in right here to req.user._id
+            return rp.put(`${BASE_URL}/api/users/5b70cd972bfc6863d439fade/${body.access_token}/${body.refresh_token}`);
         })
         .catch(function (reason) {
             res.send("failed");
             console.log(reason);
         })
 })
-
 
 
 app.use('*', (req, res) => {
