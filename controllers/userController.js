@@ -70,6 +70,7 @@ exports.checkUser = (req, res) => {
         console.log("username: " + user[0].username);
         console.log("rToken: " + user[0].refreshToken);
         console.log("aToken: " + user[0].accessToken);
+        console.log("alarmID: " + user[0].alarmId);
         res.status(200).json(user.map(user => user.checkData()));   
     })
     .catch(err => {

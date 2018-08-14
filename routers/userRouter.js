@@ -22,24 +22,6 @@ router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //using to check if data is acually there.. del later
 router.get('/testuser', userController.checkUser);
-
-//id here would be the user _id
-router.put('/:id/:aToken/:rToken', (req, res) => {
-    const updateToken = { 
-        "accessToken" : req.params.aToken,
-        "refreshToken" : req.params.rToken
-    }
-
-    User
-        .findByIdAndUpdate(req.params.id, { $set: updateToken }, { new: true })
-        .exec()
-        .then(user => res.status(200).json(user.checkData()))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' });
-        });
-});
-
 const {
   // Assigns the Strategy export to the name JwtStrategy using object
   // destructuring
@@ -74,7 +56,7 @@ passport.use(new LocalStrategy({
 ))
 
 const createAuthToken = user => {
-  return jwt.sign({user}, config.JWT_SECRET, {
+  return jwt.sign({ user }, config.JWT_SECRET, {
     subject: user.username,
     expiresIn: config.JWT_EXPIRY,
     algorithm: 'HS256'
@@ -87,8 +69,49 @@ router.post('/login',
     failureRedirect: '/failed'
   }), (req, res, info) => {
     const authToken = createAuthToken(req.user.apiRepr());
-    res.json({authToken: authToken, user: req.user._id});
+    res.json({ authToken: authToken, user: req.user._id });
     console.log('logging in');
-});
+  });
 
+//save access and refresh token
+router.put('/:userId/:aToken/:rToken', (req, res) => {
+  const updateToken = {
+    "accessToken": req.params.aToken,
+    "refreshToken": req.params.rToken
+  }
+
+  User
+    .findByIdAndUpdate(req.user.userId, { $set: updateToken }, { new: true })
+    .exec()
+    .then(user => res.status(200).json(user.checkData()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
+//update access token after refresh
+router.put('/:userId/token/:aToken', (req, res) => {
+  const updateToken = {
+    "accessToken": req.params.aToken
+  }
+  User
+    .findByIdAndUpdate(req.params.userId, { $set: {"accessToken" : req.params.aToken}}, { new: true })
+    .exec()
+    .then(user => res.status(200).json(user.checkData()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
+//save alarm id
+router.put('/:userId/:alarmId', (req, res) => {
+  User
+  .findByIdAndUpdate(req.params.userId, { $set: {"alarmId" : req.params.alarmId}}, { new: true })
+  .exec()
+  .then(user => res.status(200).json(user.checkData()))
+  .catch(err => {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+})
 module.exports = router;

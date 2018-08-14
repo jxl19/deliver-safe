@@ -28,6 +28,9 @@ const userSchema = mongoose.Schema({
   },
   accessToken: {
     type: String
+  },
+  alarmId: {
+    type: String
   }
 });
 
@@ -60,7 +63,8 @@ userSchema.methods.checkData = function () {
     password: this.password,
     pin: this.pin,
     refreshToken: this.refreshToken,
-    accessToken: this.accessToken
+    accessToken: this.accessToken,
+    alarmId: this.alarmId
   }
 }
 userSchema.plugin(mongodbErrorHandler);

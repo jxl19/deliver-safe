@@ -13,6 +13,7 @@ const rp = require('request-promise');
 const { PORT, DATABASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, BASE_URL } = require('./config.js');
 const {User} = require('./models');
 const userRouter = require('./routers/userRouter');
+const alarmRouter = require('./routers/alarmRouter');
 mongoose.Promise = global.Promise;
 
 app.use(morgan('common'));
@@ -54,18 +55,11 @@ function ensureAuthenticated(req, res, next) {
 }
 
 app.use('/api/users', userRouter);
+app.use('/alarm', alarmRouter);
+
 app.get('/', (req, res) => {
-    var testVar;
     //redir somewhere
-    // console.log(req.user);
-    User.find(({_id: req.user._id}))
-    .exec()
-    .then(user => {
-        testVar = user[0].accessToken;
-        res.send(user[0].accessToken);
-    });
-    console.log("testVar: " + testVar);
-    // res.send("bye");
+    res.send("hello world");
 })
 
 
@@ -96,8 +90,7 @@ app.get('/callback', (req, res) => {
             //send the tokens to server and store
             console.log(body);
             res.send(body);
-            //change later.. id is hardcoded in right here to req.user._id
-            return rp.put(`${BASE_URL}/api/users/5b70cd972bfc6863d439fade/${body.access_token}/${body.refresh_token}`);
+            return rp.put(`${BASE_URL}/api/users/${body.access_token}/${body.refresh_token}`);
         })
         .catch(function (reason) {
             res.send("failed");
