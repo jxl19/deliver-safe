@@ -8,7 +8,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 const userController = require('../controllers/userController');
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
-const config = require('../config');
+const { JWT_SECRET } = require('../config');
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -56,9 +56,8 @@ passport.use(new LocalStrategy({
 ))
 
 const createAuthToken = user => {
-  return jwt.sign({ user }, config.JWT_SECRET, {
+  return jwt.sign({ user }, JWT_SECRET, {
     subject: user.username,
-    expiresIn: config.JWT_EXPIRY,
     algorithm: 'HS256'
   });
 };
@@ -95,7 +94,7 @@ router.put('/:userId/token/:aToken', (req, res) => {
     "accessToken": req.params.aToken
   }
   User
-    .findByIdAndUpdate(req.params.userId, { $set: {"accessToken" : req.params.aToken}}, { new: true })
+    .findByIdAndUpdate(req.params.userId, { $set: { "accessToken": req.params.aToken } }, { new: true })
     .exec()
     .then(user => res.status(200).json(user.checkData()))
     .catch(err => {
@@ -106,12 +105,12 @@ router.put('/:userId/token/:aToken', (req, res) => {
 //save alarm id
 router.put('/:userId/:alarmId', (req, res) => {
   User
-  .findByIdAndUpdate(req.params.userId, { $set: {"alarmId" : req.params.alarmId}}, { new: true })
-  .exec()
-  .then(user => res.status(200).json(user.checkData()))
-  .catch(err => {
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
-  });
+    .findByIdAndUpdate(req.params.userId, { $set: { "alarmId": req.params.alarmId } }, { new: true })
+    .exec()
+    .then(user => res.status(200).json(user.checkData()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
 })
 module.exports = router;
