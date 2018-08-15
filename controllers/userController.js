@@ -58,8 +58,6 @@ exports.saveTokens = (req, res) => {
 exports.checkUser = (req, res) => {
     if (req.session && req.user && req.user._id) {
         currentUser = req.user._id;
-        console.log("userID: " + req.session.passport.user._id);
-        console.log("requserid: " + req.user._id);
     }
     console.log("userID: " + req.session.passport.user._id);
     console.log("requserid: " + req.user._id);
@@ -68,10 +66,14 @@ exports.checkUser = (req, res) => {
     .exec()
     .then(user => {
         console.log("username: " + user[0].username);
-        console.log("rToken: " + user[0].refreshToken);
-        console.log("aToken: " + user[0].accessToken);
-        console.log("alarmID: " + user[0].alarmId);
-        res.status(200).json(user.map(user => user.checkData()));   
+        const userData = {
+            id : user[0]._id,
+            username : user[0].username,
+            pin : user[0].pin,
+            accessToken : user[0].accessToken || 'no atoken',
+            refreshToken : user[0].refreshToken || 'no rtoken'
+        }
+        res.status(200).json(userData);   
     })
     .catch(err => {
         console.error(err);
