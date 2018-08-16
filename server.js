@@ -90,7 +90,8 @@ app.get('/callback', (req, res) => {
             //send the tokens to server and store
             console.log(body);
             res.send(body);
-            return rp.put(`${BASE_URL}/api/users/${body.access_token}/${body.refresh_token}`);
+            console.log(req.user._id);
+            return rp.put(`${BASE_URL}/api/users/${req.user._id}/${body.access_token}/${body.refresh_token}`);
         })
         .catch(function (reason) {
             res.send("failed");
