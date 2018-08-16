@@ -88,8 +88,8 @@ app.get('/callback', (req, res) => {
     rp(requestOpts)
         .then(function (body) {
             //send the tokens to server and store
-            res.send(body);
             console.log("userid: " + req.user._id);
+            res.send(body);
             return rp.put(`${BASE_URL}/api/users/${req.user._id}/${body.access_token}/${body.refresh_token}`);
         })
         .catch(function (reason) {
