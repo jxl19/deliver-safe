@@ -70,8 +70,8 @@ exports.checkUser = (req, res) => {
             id : user[0]._id,
             username : user[0].username,
             pin : user[0].pin,
-            accessToken : user[0].accessToken || 'no atoken',
-            refreshToken : user[0].refreshToken || 'no rtoken'
+            accessToken : user[0].accessToken || '',
+            refreshToken : user[0].refreshToken || ''
         }
         res.status(200).json(userData);   
     })
