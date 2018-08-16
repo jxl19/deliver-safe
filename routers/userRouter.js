@@ -4,7 +4,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const bodyParser = require('body-parser');
 const router = express.Router();
 const flash=require('connect-flash');
-app.use(flash());
+router.use(flash());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 const userController = require('../controllers/userController');
