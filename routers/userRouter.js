@@ -80,7 +80,7 @@ router.put('/:userId/:aToken/:rToken', (req, res) => {
   }
 
   User
-    .findByIdAndUpdate(req.user.userId, { $set: updateToken }, { new: true })
+    .findByIdAndUpdate(req.params.userId, { $set: updateToken }, { new: true })
     .exec()
     .then(user => res.status(200).json(user.checkData()))
     .catch(err => {
