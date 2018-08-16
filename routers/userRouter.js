@@ -64,7 +64,6 @@ const createAuthToken = user => {
 
 router.post('/login',
   passport.authenticate('local', {
-    failureFlash: 'Invalid username or password.',
     failureRedirect: '/failed'
   }), (req, res, info) => {
     const authToken = createAuthToken(req.user.apiRepr());
