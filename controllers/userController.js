@@ -62,7 +62,7 @@ exports.checkUser = (req, res) => {
     console.log("userID: " + req.session.passport.user._id);
     console.log("requserid: " + req.user._id);
     User
-    .find({_id: req.params.id})
+    .find({_id: req.user._id})
     .exec()
     .then(user => {
         console.log("username: " + user[0].username);

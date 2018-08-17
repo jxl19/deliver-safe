@@ -23,7 +23,25 @@ passport.deserializeUser(function (user, done) {
 router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //using to check if data is acually there.. del later
-router.get('/:id/testuser', userController.checkUser);
+router.get('/testuser', userController.checkUser);
+router.get('/:id', (req, res) => {
+  User
+  .find({_id: req.params.id})
+  .exec()
+  .then(user => {
+      console.log("username: " + user[0].username);
+      const userData = {
+          id : user[0]._id,
+          accessToken : user[0].accessToken || '',
+          refreshToken : user[0].refreshToken || ''
+      }
+      res.status(200).json(userData);   
+  })
+  .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+  });
+})
 const {
   // Assigns the Strategy export to the name JwtStrategy using object
   // destructuring
