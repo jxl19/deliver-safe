@@ -90,8 +90,22 @@ router.post('/login',
     res.json({ authToken: authToken, user: req.user._id });
     console.log('logging in');
   });
+//update access token after refresh
+  router.put('/:userId/token/:aToken', (req, res) => {
+    const updateToken = {
+      "accessToken": req.params.aToken
+    }
+    User
+      .findByIdAndUpdate(req.params.userId, { $set: { "accessToken": req.params.aToken } }, { new: true })
+      .exec()
+      .then(user => res.status(200).json(user.checkData()))
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+      });
+  });
 
-//save access and refresh token
+//save access and refresh token on create account
 router.put('/:userId/:aToken/:rToken', (req, res) => {
   const updateToken = {
     "accessToken": req.params.aToken,
@@ -107,20 +121,8 @@ router.put('/:userId/:aToken/:rToken', (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     });
 });
-//update access token after refresh
-router.put('/:userId/token/:aToken', (req, res) => {
-  const updateToken = {
-    "accessToken": req.params.aToken
-  }
-  User
-    .findByIdAndUpdate(req.params.userId, { $set: { "accessToken": req.params.aToken } }, { new: true })
-    .exec()
-    .then(user => res.status(200).json(user.checkData()))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    });
-});
+
+
 //save alarm id
 router.put('/:userId/:alarmId', (req, res) => {
   User
