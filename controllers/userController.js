@@ -71,7 +71,8 @@ exports.checkUser = (req, res) => {
             username : user[0].username,
             pin : user[0].pin,
             accessToken : user[0].accessToken || '',
-            refreshToken : user[0].refreshToken || ''
+            refreshToken : user[0].refreshToken || '',
+            alarmId : user[0].alarmId || '',
         }
         res.status(200).json(userData);   
     })

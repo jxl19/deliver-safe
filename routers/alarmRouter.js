@@ -48,6 +48,9 @@ router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
             console.log("user: " + user[0].id);
             return rp.put(`${BASE_URL}/api/users/${user[0].id}/${body.id}`);
         })
+        .then(() => {
+            res.send('recieved alarm id');
+        })
         .catch(function (reason) {
             res.send("failed");
             console.log(reason);
@@ -55,10 +58,13 @@ router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
     });
 });
 //cancel alarm request
-router.get('/cancel', (req, res) => {
-    User.find(({_id: req.user._id}))
+router.get('/:id/cancel', (req, res) => {
+    console.log('inside cancel');
+    User.find(({_id: req.params.id}))
     .exec()
     .then(user => {
+        console.log(user);
+        console.log(user[0].alarmId);
         var requestOpts = {
             uri: `https://api-sandbox.safetrek.io/v1/alarms/${user[0].alarmId}/status`,
             method: 'PUT',
