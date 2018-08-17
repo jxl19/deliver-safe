@@ -23,7 +23,7 @@ passport.deserializeUser(function (user, done) {
 router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //using to check if data is acually there.. del later
-router.get('/testuser', userController.checkUser);
+router.get('/:id/testuser', userController.checkUser);
 const {
   // Assigns the Strategy export to the name JwtStrategy using object
   // destructuring

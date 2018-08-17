@@ -61,7 +61,10 @@ app.get('/', (req, res) => {
     //redir somewhere
     res.send("hello world");
 })
-
+app.get('/hello', (req, res) => {
+    console.log('hello j');
+    res.send('hello java');
+})
 
 app.get('/redir', (req, res) => {
     res.redirect(`https://account-sandbox.safetrek.io/authorize?client_id=${CLIENT_ID}&scope=openid phone offline_access&response_type=code&redirect_uri=${REDIRECT_URL}`)

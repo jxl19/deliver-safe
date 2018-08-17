@@ -11,7 +11,7 @@ const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, BASE_URL } = require('../config.
 const rp = require('request-promise');
 
 //creates alarm request
-router.get('/create', (req, res) => {
+router.get('/create/:lat/:lng', (req, res) => {
     User.find(({_id: req.user._id}))
     .exec()
     .then(user => {
