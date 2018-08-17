@@ -77,8 +77,8 @@ router.get('/cancel', (req, res) => {
     });
 })
 //refresh to get new access token
-router.get('/refresh', (req, res) => {
-    User.find(({_id: req.user._id}))
+router.get('/:id/refresh', (req, res) => {
+    User.find(({_id: req.params.id}))
     .exec()
     .then(user => {
         var requestOpts = {
