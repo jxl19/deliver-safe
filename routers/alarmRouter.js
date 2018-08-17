@@ -20,6 +20,8 @@ router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
     User.find(({_id: req.params.id}))
     .exec()
     .then(user => {
+        console.log(user);
+        console.log(user[0].accessToken);
         var requestOpts = {
             uri: 'https://api-sandbox.safetrek.io/v1/alarms',
             method: 'POST',
