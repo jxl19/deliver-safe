@@ -23,14 +23,15 @@ passport.deserializeUser(function (user, done) {
 router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //grabs user data
-router.get('/testuser', userController.checkUser);
+router.get('/:id/getuser', userController.checkUser);
 router.get('/:id/pin', (req, res) => {
   User
   .find({_id: req.params.id})
   .exec()
   .then(user => {
     console.log(user);
-    res.status(200).json({pin:user.pin});
+    console.log(user.pin);
+    res.status(200).json({pin:user[0].pin});
   })
   .catch(err => {
     console.error(err);
@@ -46,7 +47,7 @@ router.get('/:id', (req, res) => {
       const userData = {
           id : user[0]._id,
           accessToken : user[0].accessToken || '',
-          refreshToken : user[0].refreshToken || ''
+          refreshToken : user[0].refreshToken || '',
       }
       res.status(200).json(userData);   
   })
