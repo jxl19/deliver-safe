@@ -30,7 +30,7 @@ router.get('/:id/pin', (req, res) => {
   .exec()
   .then(user => {
     console.log(user);
-    res.status(200).json(user.pin);
+    res.status(200).json({pin:user.pin});
   })
   .catch(err => {
     console.error(err);
