@@ -23,7 +23,7 @@ passport.deserializeUser(function (user, done) {
 router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //grabs user data
-router.get('/:id/getuser', userController.checkUser);
+router.get('/testuser', userController.checkUser);
 router.get('/:id/pin', (req, res) => {
   User
   .find({_id: req.params.id})
