@@ -36,9 +36,9 @@ router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
                     "medical": false
                   },
                   "location.coordinates": {
-                    "lat": req.params.lat,
-                    "lng": req.params.lng,
-                    "accuracy": req.params.acc
+                    "lat": parseInt(req.params.lat),
+                    "lng": parseInt(req.params.lng),
+                    "accuracy": parseInt(req.params.acc)
                   }
             },
             json: true
