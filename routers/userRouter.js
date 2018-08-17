@@ -25,9 +25,9 @@ router.get('/logout', userController.logout);
 //grabs user data
 router.get('/testuser', userController.checkUser);
 
-router.put('/removeAlarm', (req, res) => {
+router.put('/:id/removeAlarm', (req, res) => {
   User
-  .findByIdAndUpdate(req.user._id, { $set: { "alarmId": "" } }, { new: true })
+  .findByIdAndUpdate(req.params.id, { $set: { "alarmId": "" } }, { new: true })
   .exec()
   .then(user => res.status(200).json(user.checkData()))
   .catch(err => {

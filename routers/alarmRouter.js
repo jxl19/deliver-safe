@@ -81,7 +81,7 @@ router.get('/:id/cancel', (req, res) => {
         .then(function (body) {
             //send the tokens to server and store
             console.log(body);
-            return rp.put(`${BASE_URL}/api/users/removeAlarm`);
+            return rp.put(`${BASE_URL}/api/users/${req.params.id}/removeAlarm`);
         })
         .then(() => {
             res.send("alarm cancelled");
