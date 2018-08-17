@@ -90,8 +90,8 @@ router.get('/:id/cancel', (req, res) => {
     });
 })
 //refresh to get new access token
-router.get('/:id/refresh', (req, res) => {
-    User.find(({_id: req.params.id}))
+router.get('/refresh', (req, res) => {
+    User.find(({_id: req.user._id}))
     .exec()
     .then(user => {
         var requestOpts = {
@@ -112,8 +112,10 @@ router.get('/:id/refresh', (req, res) => {
         .then(function (body) {
             //send the tokens to server and store
             console.log(body);
-            res.send(body);
             return rp.put(`${BASE_URL}/api/users/${user[0].id}/token/${body.access_token}`);
+        })
+        .then(() => {
+            res.send('refreshed token');
         })
         .catch(function (reason) {
             res.send("failed");
