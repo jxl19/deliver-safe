@@ -17,7 +17,7 @@ router.get('/create/testcreate', (req, res) => {
 //creates alarm request
 router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
     console.log('inside create');
-    User.find(({_id: req.user._id}))
+    User.find(({_id: req.params.id}))
     .exec()
     .then(user => {
         var requestOpts = {
