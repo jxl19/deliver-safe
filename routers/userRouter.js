@@ -27,7 +27,7 @@ router.get('/testuser', userController.checkUser);
 
 router.put('/removeAlarm', (req, res) => {
   User
-  .findByIdAndUpdate(req.user._id, { $set: { "accessToken": "" } }, { new: true })
+  .findByIdAndUpdate(req.user._id, { $set: { "alarmId": "" } }, { new: true })
   .exec()
   .then(user => res.status(200).json(user.checkData()))
   .catch(err => {
