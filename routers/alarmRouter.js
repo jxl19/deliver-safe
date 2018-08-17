@@ -11,7 +11,7 @@ const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, BASE_URL } = require('../config.
 const rp = require('request-promise');
 
 //creates alarm request
-router.get('/create/:lat/:lng', (req, res) => {
+router.get('/create/:id/:lat/:lng:/acc', (req, res) => {
     User.find(({_id: req.user._id}))
     .exec()
     .then(user => {
@@ -29,20 +29,16 @@ router.get('/create/:lat/:lng', (req, res) => {
                     "medical": false
                   },
                   "location.coordinates": {
-                    "lat": 34.32334,
-                    "lng": -117.3343,
-                    "accuracy": 5
+                    "lat": req.params.lat,
+                    "lng": req.params.lng,
+                    "accuracy": req.params.acc
                   }
             },
             json: true
         };
         rp(requestOpts)
         .then(function (body) {
-            //we need to save this current id somewhere..
-            console.log("req: " + req.user.id);
             console.log("user: " + user[0].id);
-            // console.log(body);
-            res.send(body);
             return rp.put(`${BASE_URL}/api/users/${user[0].id}/${body.id}`);
         })
         .catch(function (reason) {
@@ -80,7 +76,7 @@ router.get('/cancel', (req, res) => {
         })
     });
 })
-//refresh token
+//refresh to get new access token
 router.get('/refresh', (req, res) => {
     User.find(({_id: req.user._id}))
     .exec()
