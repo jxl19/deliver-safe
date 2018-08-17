@@ -81,7 +81,7 @@ router.get('/:id/cancel', (req, res) => {
         .then(function (body) {
             //send the tokens to server and store
             console.log(body);
-            res.send(body);
+            res.send("alarm canceled");
         })
         .catch(function (reason) {
             res.send("failed");
