@@ -10,8 +10,13 @@ const jwt = require('jsonwebtoken');
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, BASE_URL } = require('../config.js');
 const rp = require('request-promise');
 
+router.get('/create/testcreate', (req, res) => {
+    console.log('hello there');
+    res.send("inside testcreate");
+})
 //creates alarm request
-router.get('/create/:id/:lat/:lng:/acc', (req, res) => {
+router.get('/create/:id/:lat/:lng/:acc', (req, res) => {
+    console.log('inside create');
     User.find(({_id: req.user._id}))
     .exec()
     .then(user => {
