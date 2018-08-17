@@ -96,7 +96,7 @@ app.get('/callback', (req, res) => {
             return rp.put(`${BASE_URL}/api/users/${req.user._id}/${body.access_token}/${body.refresh_token}`);
         })
         .then(() => {
-            res.send("Press Button on upper left to go back");
+            res.send("Press Go Back to go to Homepage");
         })
         .catch(function (reason) {
             res.send("failed");

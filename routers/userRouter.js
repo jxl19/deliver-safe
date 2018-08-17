@@ -24,6 +24,18 @@ router.post('/signup', userController.register);
 router.get('/logout', userController.logout);
 //grabs user data
 router.get('/testuser', userController.checkUser);
+
+router.put('/removeAlarm', (req, res) => {
+  User
+  .findByIdAndUpdate(req.user._id, { $set: { "accessToken": "" } }, { new: true })
+  .exec()
+  .then(user => res.status(200).json(user.checkData()))
+  .catch(err => {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+})
+
 router.get('/:id/pin', (req, res) => {
   User
   .find({_id: req.params.id})
@@ -38,16 +50,18 @@ router.get('/:id/pin', (req, res) => {
     res.status(500).json({error: 'Internal Server Error'});
   })
 });
+
 router.get('/:id', (req, res) => {
   User
   .find({_id: req.params.id})
   .exec()
   .then(user => {
-      console.log("username: " + user[0].username);
+      console.log("username: " + user[0].alarmId);
       const userData = {
           id : user[0]._id,
           accessToken : user[0].accessToken || '',
           refreshToken : user[0].refreshToken || '',
+          alarmId : user[0].alarmId || ''
       }
       res.status(200).json(userData);   
   })
@@ -106,9 +120,6 @@ router.post('/login',
   });
 //update access token after refresh
   router.put('/:userId/token/:aToken', (req, res) => {
-    const updateToken = {
-      "accessToken": req.params.aToken
-    }
     User
       .findByIdAndUpdate(req.params.userId, { $set: { "accessToken": req.params.aToken } }, { new: true })
       .exec()
