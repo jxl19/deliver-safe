@@ -92,6 +92,38 @@ router.get('/:id/cancel', (req, res) => {
         })
     });
 })
+//update location
+router.get('/update/:id/:lat/:lng/:acc', (req, res) => {
+    console.log('inside update alarm location');
+    User.find(({_id: req.params.id}))
+    .exec()
+    .then(user => {
+        var requestOpts = {
+            uri: `https://api-sandbox.safetrek.io/v1/alarms/${user[0].alarmId}/locations`,
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization' : 'Bearer ' + user[0].accessToken
+            },
+            body: {
+                  "coordinates": {
+                    "lat": parseInt(req.params.lat),
+                    "lng": parseInt(req.params.lng),
+                    "accuracy": parseInt(req.params.acc)
+                  }
+            },
+            json: true
+        };
+    rp(requestOpts)
+    .then(()=> {
+        res.send("updated location");
+    })
+    .catch(function (reason) {
+        res.send("failed update");
+        console.log(reason);
+    })
+})
+})
 //refresh to get new access token
 router.get('/refresh', (req, res) => {
     User.find(({_id: req.user._id}))

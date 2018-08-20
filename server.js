@@ -96,7 +96,7 @@ app.get('/callback', (req, res) => {
             return rp.put(`${BASE_URL}/api/users/${req.user._id}/${body.access_token}/${body.refresh_token}`);
         })
         .then(() => {
-            res.send("Press Go Back to go to Homepage");
+            res.send("Connected with Noonlight.. sending back to app");
         })
         .catch(function (reason) {
             res.send("failed");
