@@ -115,7 +115,8 @@ router.get('/update/:id/:lat/:lng/:acc', (req, res) => {
             json: true
         };
     rp(requestOpts)
-    .then(()=> {
+    .then((body)=> {
+        console.log(body);
         res.send("updated location");
     })
     .catch(function (reason) {
